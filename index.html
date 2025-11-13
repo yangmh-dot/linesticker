@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Realistic Opening Surprise Generator</title>
+  <style>
+    :root{--bg:#0b0b0f;--panel:#14141c;--muted:#8a8aa0;--text:#f5f6fb;--accent:#59c9a5;--accent2:#8ab4ff;--danger:#ff6b6b}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0b0b10,#0b0b0f 60%);color:var(--text);}
+    .wrap{max-width:980px;margin:24px auto;padding:16px}
+    header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between;margin-bottom:14px}
+    header h1{font-size:20px;margin:0;letter-spacing:.3px}
+    header .mini{font-size:12px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .card{background:var(--panel);border:1px solid #2a2a35;border-radius:14px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .span-12{grid-column:span 12}
+    .span-6{grid-column:span 6}
+    .span-4{grid-column:span 4}
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+    select,input[type="text"],textarea{width:100%;background:#0e0e15;border:1px solid #2a2a35;color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
+    textarea{min-height:160px;resize:vertical}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:1px solid #2a2a35;background:#11111a;color:var(--text);padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer;transition:transform .05s ease,opacity .2s}
+    .btn:hover{opacity:.95}
+    .btn:active{transform:scale(.98)}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#6ad8be);color:#07130f;border:none}
+    .btn.blue{background:linear-gradient(135deg,var(--accent2),#7ab2ff);color:#071018;border:none}
+    .btn.ghost{background:transparent}
+    .btn.danger{background:linear-gradient(135deg,#ff6b6b,#ff8787);color:#250c0c;border:none}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{font-size:12px;background:#0f0f17;border:1px dashed #2f2f3c;color:#bfc0d8;padding:6px 10px;border-radius:999px}
+    .muted{color:var(--muted)}
+    .note{font-size:12px;color:#b6b7ce}
+    .footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px}
+    .switch{position:relative;display:inline-block;width:46px;height:26px}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a2a35;transition:.2s;border-radius:999px}
+    .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;top:3px;background:white;transition:.2s;border-radius:50%}
+    .switch input:checked + .slider{background:var(--accent)}
+    .switch input:checked + .slider:before{transform:translateX(20px)}
+    .kbd{border:1px solid #2a2a35;background:#0f0f17;border-radius:6px;font-size:12px;padding:1px 6px}
+    @media (max-width:880px){.span-6,.span-4{grid-column:span 12}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Realistic Opening Surprise Generator</h1>
+      <div class="mini">All outputs enforce: <span class="kbd">real animals</span>, <span class="kbd">no cartoon</span>, <span class="kbd">no fantasy</span>, <span class="kbd">9:16</span>.</div>
+    </header><div class="grid">
+  <div class="card span-6">
+    <label for="object">Opening object</label>
+    <select id="object"></select>
+  </div>
+  <div class="card span-6">
+    <label for="animal">Animal (real)</label>
+    <select id="animal"></select>
+  </div>
+
+  <div class="card span-4">
+    <label for="surface">Surface / location</label>
+    <select id="surface"></select>
+  </div>
+  <div class="card span-4">
+    <label for="lighting">Lighting</label>
+    <select id="lighting"></select>
+  </div>
+  <div class="card span-4">
+    <label for="camera">Camera style</label>
+    <select id="camera"></select>
+  </div>
+
+  <div class="card span-12">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="chips" id="quick"></div>
+      <div class="row">
+        <button class="btn ghost" id="random">Randomize</button>
+        <button class="btn primary" id="generate">Generate Prompt</button>
+      </div>
+    </div>
+    <div class="row" style="gap:18px;margin-top:12px">
+      <div>
+        <label>Include beat sheet (timestamps)</label>
+        <label class="switch"><input id="beats" type="checkbox" checked><span class="slider"></span></label>
+      </div>
+      <div>
+        <label>Include reaction (lick / blink)</label>
+        <label class="switch"><input id="reaction" type="checkbox" checked><span class="slider"></span></label>
+      </div>
+      <div>
+        <label>Sound cues (rustle/tear)</label>
+        <label class="switch"><input id="sound" type="checkbox" checked><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card span-12" id="outputCard">
+    <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
+      <strong>Standard Prompt</strong>
+      <div class="row">
+        <button class="btn blue" id="copyStd">Copy</button>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+    </div>
+    <textarea id="std" readonly placeholder="Your prompt will appear here..."></textarea>
+    <div id="beatsWrap" style="margin-top:12px;display:none">
+      <div class="row" style="justify-content:space-between;align-items:center;margin:8px 0 6px">
+        <strong>Beat Sheet Version</strong>
+        <button class="btn blue" id="copyBeats">Copy beats</button>
+      </div>
+      <textarea id="beatsOut" readonly></textarea>
+    </div>
+    <p class="note" style="margin-top:8px">Tip: Output is tuned for Sora 2 / Runway / Pika. Keep it <em>realistic</em>—no fantasy, no cartoon elements.</p>
+  </div>
+
+  <div class="card span-12">
+    <label>One‑line logline (auto)</label>
+    <input id="logline" type="text" readonly />
+  </div>
+</div>
+
+<div class="footer">
+  <span>© 2025 Opening Surprise • Designed for mobile + GitHub Pages.</span>
+  <span class="muted">Made with ♥</span>
+</div>
+
+  </div><script>
+(function(){
+  const objects = [
+    {v:'sealed blue snack bag', exSurface:'kitchen table'},
+    {v:'small wooden drawer', exSurface:'wooden desk'},
+    {v:'white shoebox with lid', exSurface:'living room floor'},
+    {v:'cardboard delivery box sealed with tape', exSurface:'hallway floor'},
+    {v:'silver cookie jar with lid', exSurface:'kitchen counter'},
+    {v:'milk carton with folded spout', exSurface:'kitchen table'},
+    {v:'home mailbox with a front flap', exSurface:'porch'},
+    {v:'refrigerator door', exSurface:'modern kitchen'}
+  ];
+  const animals = ['cat','puppy','rabbit','hamster','hedgehog','parrot','guinea pig','turtle'];
+  const surfaces = ['kitchen table','wooden desk','kitchen counter','living room floor','hallway floor','porch at daytime'];
+  const lighting = ['soft natural daylight','warm indoor ambient light','cool daylight near a window','neutral studio-like soft light'];
+  const camera = ['macro close-up on hands','tripod static close-up','gentle handheld close-up','slow-motion close-up (not overly dramatic)'];
+
+  const el = id=>document.getElementById(id);
+  const $object=el('object'),$animal=el('animal'),$surface=el('surface'),$lighting=el('lighting'),$camera=el('camera');
+  const $std=el('std'),$beatsOut=el('beatsOut'),$beats=el('beats');
+  const $beatsWrap=el('beatsWrap');
+
+  function fill(sel,arr){ sel.innerHTML = arr.map(x=>`<option value="${(x.v||x)}">${(x.v||x)}</option>`).join(''); }
+  fill($object,objects); fill($animal,animals); fill($surface,surfaces); fill($lighting,lighting); fill($camera,camera);
+
+  // Quick presets chips
+  const quick = [
+    {t:'Snack bag + Cat', o:objects[0].v, a:'cat'},
+    {t:'Drawer + Cat', o:'small wooden drawer', a:'cat'},
+    {t:'Shoebox + Rabbit', o:'white shoebox with lid', a:'rabbit'},
+    {t:'Delivery box + Puppy', o:'cardboard delivery box sealed with tape', a:'puppy'}
+  ];
+  const quickWrap = el('quick');
+  quick.forEach(q=>{
+    const span=document.createElement('button');
+    span.className='chip';
+    span.textContent=q.t;
+    span.onclick=()=>{ $object.value=q.o; $animal.value=q.a; autoSurface(); build(); };
+    quickWrap.appendChild(span);
+  });
+
+  function autoSurface(){
+    const objVal=$object.value; const match=objects.find(x=>x.v===objVal);
+    if(match){ $surface.value = match.exSurface; }
+  }
+  $object.addEventListener('change',()=>{ autoSurface(); });
+
+  function sentenceCase(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+  function build(){
+    const obj=$object.value, ani=$animal.value, surf=$surface.value, light=$lighting.value, cam=$camera.value;
+    const withReaction = el('reaction').checked;
+    const withSound = el('sound').checked;
+    const forbid = 'Everything looks genuinely filmed: real animal, no cartoon, no fantasy, no magical effects.';
+
+    // Standard prompt
+    const parts = [];
+    parts.push(`A hyper-realistic vertical 9:16 cinematic close-up video.`);
+    parts.push(`Scene begins with a ${obj} resting on a ${surf}. Human hands approach and start opening it slowly.`);
+    parts.push(`Camera style: ${cam}. Lighting: ${light}.`);
+    if(withSound) parts.push(`Audible realistic sounds of rustling and tearing.`);
+    parts.push(`As it opens, there is not food or objects inside but a real ${ani} emerging, captured with shallow depth of field and detailed textures.`);
+    if(withReaction) parts.push(`The ${ani} looks at the camera, then briefly blinks or licks its nose.`);
+    parts.push(forbid);
+    $std.value = parts.join(' ');
+
+    // Beat sheet
+    const beats=[
+      `[0–2s] Establish: a closed ${obj} on a ${surf}. Hands enter frame.`,
+      `[2–4s] Opening action: close macro on the seal / lid / tape as it separates; ${light.toLowerCase()}.`,
+      `[4–6s] Tease: a hint of fur is visible inside; focus racks from hands to interior.`,
+      `[6–8s] Reveal: a real ${ani} fills frame inside; textures of foil/wood/cardboard are sharp.`,
+      `[8–10s] Button: the ${ani} holds eye contact${withReaction?", then blinks or licks its nose":""}.`,
+      `[Tech] Camera: ${cam}. Ratio: 9:16 vertical. Tone: realistic, no fantasy, no cartoon.`
+    ].join('\n');
+    $beatsOut.value = beats;
+
+    el('logline').value = `${sentenceCase(obj)} opening reveals a real ${ani} in a realistic 9:16 macro video.`;
+
+    $beatsWrap.style.display = $beats.checked ? 'block' : 'none';
+  }
+
+  function randFrom(a){ return a[Math.floor(Math.random()*a.length)]; }
+  el('random').onclick = ()=>{ $object.value=randFrom(objects).v; $animal.value=randFrom(animals); autoSurface(); $lighting.value=randFrom(lighting); $camera.value=randFrom(camera); build(); };
+  el('generate').onclick = build;
+  el('beats').onchange = ()=>{ $beatsWrap.style.display = $beats.checked ? 'block' : 'none'; };
+
+  el('copyStd').onclick = async()=>{ await navigator.clipboard.writeText($std.value); flash(el('copyStd')); };
+  el('copyBeats').onclick = async()=>{ await navigator.clipboard.writeText($beatsOut.value); flash(el('copyBeats')); };
+  el('reset').onclick = ()=>{ $object.selectedIndex=0; $animal.selectedIndex=0; $surface.selectedIndex=0; $lighting.selectedIndex=0; $camera.selectedIndex=0; el('reaction').checked=true; el('sound').checked=true; el('beats').checked=true; autoSurface(); build(); };
+
+  function flash(btn){ const old=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=old,900); }
+
+  // initial state
+  autoSurface(); build();
+})();
+</script></body>
+</html>
