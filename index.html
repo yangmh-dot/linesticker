@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Realistic Opening Surprise Generator</title>
+  <title>真實開啟驚喜 Prompt 產生器</title>
   <style>
     :root{--bg:#0b0b0f;--panel:#14141c;--muted:#8a8aa0;--text:#f5f6fb;--accent:#59c9a5;--accent2:#8ab4ff;--danger:#ff6b6b}
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0b0b10,#0b0b0f 60%);color:var(--text);}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans TC',sans-serif;background:linear-gradient(180deg,#0b0b10,#0b0b0f 60%);color:var(--text);}
     .wrap{max-width:980px;margin:24px auto;padding:16px}
     header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between;margin-bottom:14px}
     header h1{font-size:20px;margin:0;letter-spacing:.3px}
@@ -27,7 +27,6 @@
     .btn.primary{background:linear-gradient(135deg,var(--accent),#6ad8be);color:#07130f;border:none}
     .btn.blue{background:linear-gradient(135deg,var(--accent2),#7ab2ff);color:#071018;border:none}
     .btn.ghost{background:transparent}
-    .btn.danger{background:linear-gradient(135deg,#ff6b6b,#ff8787);color:#250c0c;border:none}
     .chips{display:flex;gap:8px;flex-wrap:wrap}
     .chip{font-size:12px;background:#0f0f17;border:1px dashed #2f2f3c;color:#bfc0d8;padding:6px 10px;border-radius:999px;cursor:pointer}
     .muted{color:var(--muted)}
@@ -46,37 +45,36 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Realistic Opening Surprise Generator</h1>
+      <h1>真實開啟驚喜 Prompt 產生器</h1>
       <div class="mini">
-        All outputs enforce:
-        <span class="kbd">real animals</span>,
-        <span class="kbd">no cartoon</span>,
-        <span class="kbd">no fantasy</span>,
-        <span class="kbd">9:16</span>,
-        tuned for US-style daily scenes.
+        介面：繁體中文 ｜ 輸出：<span class="kbd">英文 Prompt</span> ｜ 強制：
+        <span class="kbd">real animals</span>、
+        <span class="kbd">no cartoon</span>、
+        <span class="kbd">no fantasy</span>、
+        <span class="kbd">9:16 vertical</span>
       </div>
     </header>
 
     <div class="grid">
       <div class="card span-6">
-        <label for="object">Opening object</label>
+        <label for="object">開啟的物件</label>
         <select id="object"></select>
       </div>
       <div class="card span-6">
-        <label for="animal">Animal (real)</label>
+        <label for="animal">出現的動物（真實）</label>
         <select id="animal"></select>
       </div>
 
       <div class="card span-4">
-        <label for="surface">Surface / location</label>
+        <label for="surface">放置位置 / 場景</label>
         <select id="surface"></select>
       </div>
       <div class="card span-4">
-        <label for="lighting">Lighting</label>
+        <label for="lighting">光線風格</label>
         <select id="lighting"></select>
       </div>
       <div class="card span-4">
-        <label for="camera">Camera style</label>
+        <label for="camera">攝影機風格</label>
         <select id="camera"></select>
       </div>
 
@@ -84,27 +82,27 @@
         <div class="row" style="justify-content:space-between;align-items:center">
           <div class="chips" id="quick"></div>
           <div class="row">
-            <button class="btn ghost" id="random">Randomize</button>
-            <button class="btn primary" id="generate">Generate Prompt</button>
+            <button class="btn ghost" id="random">隨機</button>
+            <button class="btn primary" id="generate">產生 Prompt</button>
           </div>
         </div>
         <div class="row" style="gap:18px;margin-top:12px">
           <div>
-            <label>Include beat sheet (timestamps)</label>
+            <label>輸出節奏版（含時間軸）</label>
             <label class="switch">
               <input id="beats" type="checkbox" checked>
               <span class="slider"></span>
             </label>
           </div>
           <div>
-            <label>Include reaction (lick / blink)</label>
+            <label>包含動物反應（舔鼻子 / 眨眼）</label>
             <label class="switch">
               <input id="reaction" type="checkbox" checked>
               <span class="slider"></span>
             </label>
           </div>
           <div>
-            <label>Sound cues (rustle/tear)</label>
+            <label>包含真實開啟聲音描述</label>
             <label class="switch">
               <input id="sound" type="checkbox" checked>
               <span class="slider"></span>
@@ -115,134 +113,133 @@
 
       <div class="card span-12" id="outputCard">
         <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
-          <strong>Standard Prompt</strong>
+          <strong>英文 Prompt</strong>
           <div class="row">
-            <button class="btn blue" id="copyStd">Copy</button>
-            <button class="btn" id="reset">Reset</button>
+            <button class="btn blue" id="copyStd">複製 Prompt</button>
+            <button class="btn" id="reset">重設</button>
           </div>
         </div>
-        <textarea id="std" readonly placeholder="Your prompt will appear here..."></textarea>
+        <textarea id="std" readonly placeholder="這裡會產出英文 Prompt（可直接貼到 Sora / Runway / Pika）"></textarea>
         <div id="beatsWrap" style="margin-top:12px;display:none">
           <div class="row" style="justify-content:space-between;align-items:center;margin:8px 0 6px">
-            <strong>Beat Sheet Version</strong>
-            <button class="btn blue" id="copyBeats">Copy beats</button>
+            <strong>節奏版 / Beat Sheet（英文）</strong>
+            <button class="btn blue" id="copyBeats">複製 Beat Sheet</button>
           </div>
           <textarea id="beatsOut" readonly></textarea>
         </div>
         <p class="note" style="margin-top:8px">
-          Tip: Output is tuned for Sora 2 / Runway / Pika. Keep it <em>realistic</em>—no fantasy, no cartoon elements.
+          提示：已針對 Sora 2 / Runway / Pika 調整字句，全部為寫實風格，<b>不會生成卡通、奇幻或恐龍場景</b>。
         </p>
       </div>
 
       <div class="card span-12">
-        <label>One-line logline (auto)</label>
+        <label>一句話說明（自動，英文）</label>
         <input id="logline" type="text" readonly />
       </div>
     </div>
 
     <div class="footer">
-      <span>© 2025 Opening Surprise • Designed for mobile + GitHub Pages.</span>
+      <span>© 2025 Opening Surprise • 手機 & GitHub Pages 友善版</span>
       <span class="muted">Made with ♥</span>
     </div>
   </div>
 
 <script>
 (function(){
-  // 新增：包含美國日常場景的 opening objects
+  // 物件：label（給你看，中文）、v（給模型用，英文）、exSurface（預設場景，英文）
   const objects = [
-    {v:'sealed blue snack bag', exSurface:'kitchen table'},
-    {v:'brown takeout paper bag', exSurface:'coffee table'},
-    {v:'plain white pizza box', exSurface:'kitchen counter'},
-    {v:'cereal box with open top', exSurface:'kitchen table'},
-    {v:'Halloween candy bowl with lid', exSurface:'porch at nighttime'},
-    {v:'wrapped Christmas gift box', exSurface:'under a Christmas tree'},
-    {v:'living room couch cushion', exSurface:'sofa'},
-    {v:'plastic office lunch box', exSurface:'office desk'},
-    {v:'small wooden drawer', exSurface:'wooden desk'},
-    {v:'white shoebox with lid', exSurface:'living room floor'},
-    {v:'cardboard delivery box sealed with tape', exSurface:'hallway floor'},
-    {v:'silver cookie jar with lid', exSurface:'kitchen counter'},
-    {v:'milk carton with folded spout', exSurface:'kitchen table'},
-    {v:'home mailbox with a front flap', exSurface:'porch at daytime'},
-    {v:'refrigerator door', exSurface:'modern kitchen'}
+    {label:'密封藍色零食包裝袋', v:'sealed blue snack bag', exSurface:'kitchen table'},
+    {label:'外送棕色紙袋', v:'brown takeout paper bag', exSurface:'coffee table'},
+    {label:'白色披薩紙盒', v:'plain white pizza box', exSurface:'kitchen counter'},
+    {label:'早餐穀片紙盒', v:'cereal box with open top', exSurface:'kitchen table'},
+    {label:'萬聖節糖果盆（有蓋子）', v:'Halloween candy bowl with lid', exSurface:'porch at nighttime'},
+    {label:'包裝好的聖誕禮物盒', v:'wrapped Christmas gift box', exSurface:'under a Christmas tree'},
+    {label:'客廳沙發坐墊', v:'living room couch cushion', exSurface:'sofa'},
+    {label:'辦公室便當盒', v:'plastic office lunch box', exSurface:'office desk'},
+    {label:'木頭書桌抽屜', v:'small wooden drawer', exSurface:'wooden desk'},
+    {label:'白色鞋盒（有蓋）', v:'white shoebox with lid', exSurface:'living room floor'},
+    {label:'封膠帶的紙箱包裹', v:'cardboard delivery box sealed with tape', exSurface:'hallway floor'},
+    {label:'銀色餅乾罐', v:'silver cookie jar with lid', exSurface:'kitchen counter'},
+    {label:'牛奶紙盒（折口）', v:'milk carton with folded spout', exSurface:'kitchen table'},
+    {label:'家用信箱（前開式）', v:'home mailbox with a front flap', exSurface:'porch at daytime'},
+    {label:'家用冰箱門', v:'refrigerator door', exSurface:'modern kitchen'}
   ];
 
   const animals = [
-    'cat',
-    'puppy',
-    'golden retriever puppy',
-    'corgi',
-    'rabbit',
-    'hamster',
-    'hedgehog',
-    'guinea pig',
-    'parrot',
-    'turtle'
+    {label:'貓', v:'cat'},
+    {label:'小狗', v:'puppy'},
+    {label:'黃金獵犬幼犬', v:'golden retriever puppy'},
+    {label:'柯基', v:'corgi'},
+    {label:'兔子', v:'rabbit'},
+    {label:'倉鼠', v:'hamster'},
+    {label:'刺蝟', v:'hedgehog'},
+    {label:'天竺鼠', v:'guinea pig'},
+    {label:'鸚鵡', v:'parrot'},
+    {label:'烏龜', v:'turtle'}
   ];
 
   const surfaces = [
-    'kitchen table',
-    'kitchen counter',
-    'coffee table',
-    'wooden desk',
-    'office desk',
-    'living room floor',
-    'sofa',
-    'hallway floor',
-    'porch at daytime',
-    'porch at nighttime',
-    'under a Christmas tree',
-    'modern kitchen'
+    {label:'廚房餐桌', v:'kitchen table'},
+    {label:'廚房中島 / 檯面', v:'kitchen counter'},
+    {label:'客廳茶几', v:'coffee table'},
+    {label:'木頭書桌', v:'wooden desk'},
+    {label:'辦公桌', v:'office desk'},
+    {label:'客廳地板', v:'living room floor'},
+    {label:'沙發', v:'sofa'},
+    {label:'走廊地板', v:'hallway floor'},
+    {label:'白天門廊', v:'porch at daytime'},
+    {label:'夜晚門廊', v:'porch at nighttime'},
+    {label:'聖誕樹下', v:'under a Christmas tree'},
+    {label:'現代風格廚房', v:'modern kitchen'}
   ];
 
   const lighting = [
-    'soft natural daylight',
-    'warm indoor ambient light',
-    'cool daylight near a window',
-    'neutral studio-like soft light',
-    'cozy living room lamp light'
+    {label:'柔和自然日光', v:'soft natural daylight'},
+    {label:'溫暖室內燈光', v:'warm indoor ambient light'},
+    {label:'靠窗冷色日光', v:'cool daylight near a window'},
+    {label:'中性柔光（類棚拍）', v:'neutral studio-like soft light'},
+    {label:'客廳暖黃檯燈', v:'cozy living room lamp light'}
   ];
 
-  const camera = [
-    'macro close-up on hands',
-    'tripod static close-up',
-    'gentle handheld close-up',
-    'slow-motion close-up (not overly dramatic)'
+  const cameras = [
+    {label:'手部特寫微距鏡頭', v:'macro close-up on hands'},
+    {label:'三腳架固定近景', v:'tripod static close-up'},
+    {label:'手持輕微晃動近景', v:'gentle handheld close-up'},
+    {label:'輕微慢動作近景（不誇張）', v:'slow-motion close-up (not overly dramatic)'}
   ];
 
   const el = id => document.getElementById(id);
-  const $object = el('object'),
-        $animal = el('animal'),
-        $surface = el('surface'),
-        $lighting = el('lighting'),
-        $camera = el('camera');
-  const $std = el('std'),
-        $beatsOut = el('beatsOut'),
-        $beats = el('beats'),
-        $beatsWrap = el('beatsWrap');
+  const $object = el('object');
+  const $animal = el('animal');
+  const $surface = el('surface');
+  const $lighting = el('lighting');
+  const $camera = el('camera');
+  const $std = el('std');
+  const $beatsOut = el('beatsOut');
+  const $beats = el('beats');
+  const $beatsWrap = el('beatsWrap');
 
-  function fill(sel, arr){
+  function fillSelect(sel, arr){
     sel.innerHTML = arr.map(x => {
-      const v = (x.v || x);
-      return '<option value="' + v + '">' + v + '</option>';
+      return '<option value="' + x.v + '">' + x.label + '</option>';
     }).join('');
   }
 
-  fill($object, objects);
-  fill($animal, animals);
-  fill($surface, surfaces);
-  fill($lighting, lighting);
-  fill($camera, camera);
+  fillSelect($object, objects);
+  fillSelect($animal, animals);
+  fillSelect($surface, surfaces);
+  fillSelect($lighting, lighting);
+  fillSelect($camera, cameras);
 
-  // Quick presets：針對美國觀眾的常見場景
+  // Quick presets（中文顯示，美式場景）
   const quick = [
-    {t:'Snack bag + Cat', o:'sealed blue snack bag', a:'cat'},
-    {t:'Takeout bag + Puppy', o:'brown takeout paper bag', a:'puppy'},
-    {t:'Pizza box + Puppy', o:'plain white pizza box', a:'golden retriever puppy'},
-    {t:'Delivery box + Cat', o:'cardboard delivery box sealed with tape', a:'cat'},
-    {t:'Lunch box + Hamster', o:'plastic office lunch box', a:'hamster'},
-    {t:'Couch cushion + Cat', o:'living room couch cushion', a:'cat'},
-    {t:'Christmas gift + Puppy', o:'wrapped Christmas gift box', a:'puppy'}
+    {t:'零食包裝 + 貓', o:'sealed blue snack bag', a:'cat'},
+    {t:'外送紙袋 + 小狗', o:'brown takeout paper bag', a:'puppy'},
+    {t:'披薩盒 + 黃金獵犬幼犬', o:'plain white pizza box', a:'golden retriever puppy'},
+    {t:'紙箱包裹 + 貓', o:'cardboard delivery box sealed with tape', a:'cat'},
+    {t:'辦公便當盒 + 倉鼠', o:'plastic office lunch box', a:'hamster'},
+    {t:'沙發坐墊 + 貓', o:'living room couch cushion', a:'cat'},
+    {t:'聖誕禮物盒 + 小狗', o:'wrapped Christmas gift box', a:'puppy'}
   ];
 
   const quickWrap = el('quick');
@@ -262,23 +259,32 @@
   function autoSurface(){
     const objVal = $object.value;
     const match = objects.find(x => x.v === objVal);
-    if (match && surfaces.indexOf(match.exSurface) !== -1) {
-      $surface.value = match.exSurface;
+    if (match) {
+      const target = surfaces.find(s => s.v === match.exSurface);
+      if (target) $surface.value = target.v;
     }
   }
 
   $object.addEventListener('change', autoSurface);
 
-  function sentenceCase(s){
-    return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  function sentenceCase(str){
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   function build(){
-    const obj = $object.value;
-    const ani = $animal.value;
-    const surf = $surface.value;
-    const light = $lighting.value;
-    const cam = $camera.value;
+    const objVal = $object.value;
+    const aniVal = $animal.value;
+    const surfVal = $surface.value;
+    const lightVal = $lighting.value;
+    const camVal = $camera.value;
+
+    const obj = objects.find(x => x.v === objVal) || {v: objVal};
+    const ani = animals.find(x => x.v === aniVal) || {v: aniVal};
+    const surf = surfaces.find(x => x.v === surfVal) || {v: surfVal};
+    const light = lighting.find(x => x.v === lightVal) || {v: lightVal};
+    const cam = cameras.find(x => x.v === camVal) || {v: camVal};
+
     const withReaction = el('reaction').checked;
     const withSound = el('sound').checked;
 
@@ -288,21 +294,22 @@
     const parts = [];
     parts.push('A hyper-realistic vertical 9:16 cinematic close-up video.');
     parts.push(
-      'Scene begins with a ' + obj + ' resting on a ' + surf + '. ' +
-      'Human hands approach and start opening it slowly, showing a clear, believable motion.'
+      'The scene begins with a ' + obj.v + ' resting on a ' + surf.v + '. ' +
+      'Human hands slowly approach and start opening it in a natural, believable way.'
     );
-    parts.push('Camera style: ' + cam + '. Lighting: ' + light + '.');
+    parts.push('Camera style: ' + cam.v + '. Lighting: ' + light.v + '.');
     if (withSound) {
-      parts.push('Include subtle, realistic sounds of rustling, tearing, or opening, as appropriate for the object.');
+      parts.push('Include subtle, realistic sounds of rustling, tearing, or opening, matching the type of object.');
     }
     parts.push(
-      'As it opens, there is no food, product, or objects inside, but a real ' + ani +
-      ' emerging from the interior, captured with shallow depth of field and detailed textures.'
+      'As it opens, there is no food, product, or normal object inside. ' +
+      'Instead, a real ' + ani.v +
+      ' is revealed emerging from the interior, captured with shallow depth of field and detailed textures.'
     );
     if (withReaction) {
       parts.push(
-        'The ' + ani +
-        ' briefly holds eye contact with the camera, then naturally blinks or lightly licks its nose.'
+        'The ' + ani.v +
+        ' briefly holds eye contact with the camera, then naturally blinks or softly licks its nose.'
       );
     }
     parts.push(forbid);
@@ -310,47 +317,52 @@
     $std.value = parts.join(' ');
 
     const beats = [
-      '[0–2s] Establish: a closed ' + obj + ' on a ' + surf + '. Hands enter frame and touch the object.',
+      '[0–2s] Establish: a closed ' + obj.v + ' on a ' + surf.v + '. Hands enter frame and touch the object.',
       '[2–4s] Opening action: macro focus on the opening motion (seal / lid / tape / flap) with ' +
-        light.toLowerCase() + '.',
+        light.v.toLowerCase() + '.',
       '[4–6s] Tease: a hint of fur or the animal shape becomes visible inside; focus racks from hands to interior.',
-      '[6–8s] Reveal: a real ' + ani +
-        ' clearly fills more of the frame from inside; textures of packaging and environment stay realistic.',
-      '[8–10s] Button: the ' + ani + ' holds eye contact' +
-        (withReaction ? ', then naturally blinks or licks its nose.' : '.') ,
-      '[Tech] Camera: ' + cam +
+      '[6–8s] Reveal: a real ' + ani.v +
+        ' clearly fills more of the frame from inside; packaging and environment stay realistic.',
+      '[8–10s] Button: the ' + ani.v + ' holds eye contact' +
+        (withReaction ? ', then naturally blinks or licks its nose.' : '.'),
+      '[Tech] Camera: ' + cam.v +
         '. Ratio: 9:16 vertical. Tone: realistic everyday footage for US viewers, no fantasy, no cartoon.'
     ].join('\n');
 
     $beatsOut.value = beats;
 
     el('logline').value =
-      sentenceCase(obj) + ' opening reveals a real ' + ani + ' in a realistic 9:16 macro video.';
+      sentenceCase(obj.v) + ' opening reveals a real ' + ani.v + ' in a realistic 9:16 macro video.';
+
     $beatsWrap.style.display = $beats.checked ? 'block' : 'none';
   }
 
-  function randFrom(a){
-    return a[Math.floor(Math.random() * a.length)];
+  function randFrom(arr){
+    return arr[Math.floor(Math.random() * arr.length)];
   }
 
   el('random').onclick = () => {
     const ro = randFrom(objects);
     $object.value = ro.v;
-    $animal.value = randFrom(animals);
+    const ra = randFrom(animals);
+    $animal.value = ra.v;
     autoSurface();
-    $lighting.value = randFrom(lighting);
-    $camera.value = randFrom(camera);
+    const rl = randFrom(lighting);
+    $lighting.value = rl.v;
+    const rc = randFrom(cameras);
+    $camera.value = rc.v;
     build();
   };
 
   el('generate').onclick = build;
+
   el('beats').onchange = () => {
     $beatsWrap.style.display = $beats.checked ? 'block' : 'none';
   };
 
   function flash(btn){
     const old = btn.textContent;
-    btn.textContent = 'Copied!';
+    btn.textContent = '已複製！';
     setTimeout(() => { btn.textContent = old; }, 900);
   }
 
@@ -379,7 +391,7 @@
     build();
   };
 
-  // init
+  // 初始化
   autoSurface();
   build();
 })();
