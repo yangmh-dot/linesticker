@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,7 +29,7 @@
     .btn.ghost{background:transparent}
     .btn.danger{background:linear-gradient(135deg,#ff6b6b,#ff8787);color:#250c0c;border:none}
     .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{font-size:12px;background:#0f0f17;border:1px dashed #2f2f3c;color:#bfc0d8;padding:6px 10px;border-radius:999px}
+    .chip{font-size:12px;background:#0f0f17;border:1px dashed #2f2f3c;color:#bfc0d8;padding:6px 10px;border-radius:999px;cursor:pointer}
     .muted{color:var(--muted)}
     .note{font-size:12px;color:#b6b7ce}
     .footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px}
@@ -46,179 +47,342 @@
   <div class="wrap">
     <header>
       <h1>Realistic Opening Surprise Generator</h1>
-      <div class="mini">All outputs enforce: <span class="kbd">real animals</span>, <span class="kbd">no cartoon</span>, <span class="kbd">no fantasy</span>, <span class="kbd">9:16</span>.</div>
-    </header><div class="grid">
-  <div class="card span-6">
-    <label for="object">Opening object</label>
-    <select id="object"></select>
-  </div>
-  <div class="card span-6">
-    <label for="animal">Animal (real)</label>
-    <select id="animal"></select>
-  </div>
+      <div class="mini">
+        All outputs enforce:
+        <span class="kbd">real animals</span>,
+        <span class="kbd">no cartoon</span>,
+        <span class="kbd">no fantasy</span>,
+        <span class="kbd">9:16</span>,
+        tuned for US-style daily scenes.
+      </div>
+    </header>
 
-  <div class="card span-4">
-    <label for="surface">Surface / location</label>
-    <select id="surface"></select>
-  </div>
-  <div class="card span-4">
-    <label for="lighting">Lighting</label>
-    <select id="lighting"></select>
-  </div>
-  <div class="card span-4">
-    <label for="camera">Camera style</label>
-    <select id="camera"></select>
-  </div>
+    <div class="grid">
+      <div class="card span-6">
+        <label for="object">Opening object</label>
+        <select id="object"></select>
+      </div>
+      <div class="card span-6">
+        <label for="animal">Animal (real)</label>
+        <select id="animal"></select>
+      </div>
 
-  <div class="card span-12">
-    <div class="row" style="justify-content:space-between;align-items:center">
-      <div class="chips" id="quick"></div>
-      <div class="row">
-        <button class="btn ghost" id="random">Randomize</button>
-        <button class="btn primary" id="generate">Generate Prompt</button>
+      <div class="card span-4">
+        <label for="surface">Surface / location</label>
+        <select id="surface"></select>
+      </div>
+      <div class="card span-4">
+        <label for="lighting">Lighting</label>
+        <select id="lighting"></select>
+      </div>
+      <div class="card span-4">
+        <label for="camera">Camera style</label>
+        <select id="camera"></select>
+      </div>
+
+      <div class="card span-12">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div class="chips" id="quick"></div>
+          <div class="row">
+            <button class="btn ghost" id="random">Randomize</button>
+            <button class="btn primary" id="generate">Generate Prompt</button>
+          </div>
+        </div>
+        <div class="row" style="gap:18px;margin-top:12px">
+          <div>
+            <label>Include beat sheet (timestamps)</label>
+            <label class="switch">
+              <input id="beats" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div>
+            <label>Include reaction (lick / blink)</label>
+            <label class="switch">
+              <input id="reaction" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div>
+            <label>Sound cues (rustle/tear)</label>
+            <label class="switch">
+              <input id="sound" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card span-12" id="outputCard">
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
+          <strong>Standard Prompt</strong>
+          <div class="row">
+            <button class="btn blue" id="copyStd">Copy</button>
+            <button class="btn" id="reset">Reset</button>
+          </div>
+        </div>
+        <textarea id="std" readonly placeholder="Your prompt will appear here..."></textarea>
+        <div id="beatsWrap" style="margin-top:12px;display:none">
+          <div class="row" style="justify-content:space-between;align-items:center;margin:8px 0 6px">
+            <strong>Beat Sheet Version</strong>
+            <button class="btn blue" id="copyBeats">Copy beats</button>
+          </div>
+          <textarea id="beatsOut" readonly></textarea>
+        </div>
+        <p class="note" style="margin-top:8px">
+          Tip: Output is tuned for Sora 2 / Runway / Pika. Keep it <em>realistic</em>—no fantasy, no cartoon elements.
+        </p>
+      </div>
+
+      <div class="card span-12">
+        <label>One-line logline (auto)</label>
+        <input id="logline" type="text" readonly />
       </div>
     </div>
-    <div class="row" style="gap:18px;margin-top:12px">
-      <div>
-        <label>Include beat sheet (timestamps)</label>
-        <label class="switch"><input id="beats" type="checkbox" checked><span class="slider"></span></label>
-      </div>
-      <div>
-        <label>Include reaction (lick / blink)</label>
-        <label class="switch"><input id="reaction" type="checkbox" checked><span class="slider"></span></label>
-      </div>
-      <div>
-        <label>Sound cues (rustle/tear)</label>
-        <label class="switch"><input id="sound" type="checkbox" checked><span class="slider"></span></label>
-      </div>
+
+    <div class="footer">
+      <span>© 2025 Opening Surprise • Designed for mobile + GitHub Pages.</span>
+      <span class="muted">Made with ♥</span>
     </div>
   </div>
 
-  <div class="card span-12" id="outputCard">
-    <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
-      <strong>Standard Prompt</strong>
-      <div class="row">
-        <button class="btn blue" id="copyStd">Copy</button>
-        <button class="btn" id="reset">Reset</button>
-      </div>
-    </div>
-    <textarea id="std" readonly placeholder="Your prompt will appear here..."></textarea>
-    <div id="beatsWrap" style="margin-top:12px;display:none">
-      <div class="row" style="justify-content:space-between;align-items:center;margin:8px 0 6px">
-        <strong>Beat Sheet Version</strong>
-        <button class="btn blue" id="copyBeats">Copy beats</button>
-      </div>
-      <textarea id="beatsOut" readonly></textarea>
-    </div>
-    <p class="note" style="margin-top:8px">Tip: Output is tuned for Sora 2 / Runway / Pika. Keep it <em>realistic</em>—no fantasy, no cartoon elements.</p>
-  </div>
-
-  <div class="card span-12">
-    <label>One‑line logline (auto)</label>
-    <input id="logline" type="text" readonly />
-  </div>
-</div>
-
-<div class="footer">
-  <span>© 2025 Opening Surprise • Designed for mobile + GitHub Pages.</span>
-  <span class="muted">Made with ♥</span>
-</div>
-
-  </div><script>
+<script>
 (function(){
+  // 新增：包含美國日常場景的 opening objects
   const objects = [
     {v:'sealed blue snack bag', exSurface:'kitchen table'},
+    {v:'brown takeout paper bag', exSurface:'coffee table'},
+    {v:'plain white pizza box', exSurface:'kitchen counter'},
+    {v:'cereal box with open top', exSurface:'kitchen table'},
+    {v:'Halloween candy bowl with lid', exSurface:'porch at nighttime'},
+    {v:'wrapped Christmas gift box', exSurface:'under a Christmas tree'},
+    {v:'living room couch cushion', exSurface:'sofa'},
+    {v:'plastic office lunch box', exSurface:'office desk'},
     {v:'small wooden drawer', exSurface:'wooden desk'},
     {v:'white shoebox with lid', exSurface:'living room floor'},
     {v:'cardboard delivery box sealed with tape', exSurface:'hallway floor'},
     {v:'silver cookie jar with lid', exSurface:'kitchen counter'},
     {v:'milk carton with folded spout', exSurface:'kitchen table'},
-    {v:'home mailbox with a front flap', exSurface:'porch'},
+    {v:'home mailbox with a front flap', exSurface:'porch at daytime'},
     {v:'refrigerator door', exSurface:'modern kitchen'}
   ];
-  const animals = ['cat','puppy','rabbit','hamster','hedgehog','parrot','guinea pig','turtle'];
-  const surfaces = ['kitchen table','wooden desk','kitchen counter','living room floor','hallway floor','porch at daytime'];
-  const lighting = ['soft natural daylight','warm indoor ambient light','cool daylight near a window','neutral studio-like soft light'];
-  const camera = ['macro close-up on hands','tripod static close-up','gentle handheld close-up','slow-motion close-up (not overly dramatic)'];
 
-  const el = id=>document.getElementById(id);
-  const $object=el('object'),$animal=el('animal'),$surface=el('surface'),$lighting=el('lighting'),$camera=el('camera');
-  const $std=el('std'),$beatsOut=el('beatsOut'),$beats=el('beats');
-  const $beatsWrap=el('beatsWrap');
-
-  function fill(sel,arr){ sel.innerHTML = arr.map(x=>`<option value="${(x.v||x)}">${(x.v||x)}</option>`).join(''); }
-  fill($object,objects); fill($animal,animals); fill($surface,surfaces); fill($lighting,lighting); fill($camera,camera);
-
-  // Quick presets chips
-  const quick = [
-    {t:'Snack bag + Cat', o:objects[0].v, a:'cat'},
-    {t:'Drawer + Cat', o:'small wooden drawer', a:'cat'},
-    {t:'Shoebox + Rabbit', o:'white shoebox with lid', a:'rabbit'},
-    {t:'Delivery box + Puppy', o:'cardboard delivery box sealed with tape', a:'puppy'}
+  const animals = [
+    'cat',
+    'puppy',
+    'golden retriever puppy',
+    'corgi',
+    'rabbit',
+    'hamster',
+    'hedgehog',
+    'guinea pig',
+    'parrot',
+    'turtle'
   ];
+
+  const surfaces = [
+    'kitchen table',
+    'kitchen counter',
+    'coffee table',
+    'wooden desk',
+    'office desk',
+    'living room floor',
+    'sofa',
+    'hallway floor',
+    'porch at daytime',
+    'porch at nighttime',
+    'under a Christmas tree',
+    'modern kitchen'
+  ];
+
+  const lighting = [
+    'soft natural daylight',
+    'warm indoor ambient light',
+    'cool daylight near a window',
+    'neutral studio-like soft light',
+    'cozy living room lamp light'
+  ];
+
+  const camera = [
+    'macro close-up on hands',
+    'tripod static close-up',
+    'gentle handheld close-up',
+    'slow-motion close-up (not overly dramatic)'
+  ];
+
+  const el = id => document.getElementById(id);
+  const $object = el('object'),
+        $animal = el('animal'),
+        $surface = el('surface'),
+        $lighting = el('lighting'),
+        $camera = el('camera');
+  const $std = el('std'),
+        $beatsOut = el('beatsOut'),
+        $beats = el('beats'),
+        $beatsWrap = el('beatsWrap');
+
+  function fill(sel, arr){
+    sel.innerHTML = arr.map(x => {
+      const v = (x.v || x);
+      return '<option value="' + v + '">' + v + '</option>';
+    }).join('');
+  }
+
+  fill($object, objects);
+  fill($animal, animals);
+  fill($surface, surfaces);
+  fill($lighting, lighting);
+  fill($camera, camera);
+
+  // Quick presets：針對美國觀眾的常見場景
+  const quick = [
+    {t:'Snack bag + Cat', o:'sealed blue snack bag', a:'cat'},
+    {t:'Takeout bag + Puppy', o:'brown takeout paper bag', a:'puppy'},
+    {t:'Pizza box + Puppy', o:'plain white pizza box', a:'golden retriever puppy'},
+    {t:'Delivery box + Cat', o:'cardboard delivery box sealed with tape', a:'cat'},
+    {t:'Lunch box + Hamster', o:'plastic office lunch box', a:'hamster'},
+    {t:'Couch cushion + Cat', o:'living room couch cushion', a:'cat'},
+    {t:'Christmas gift + Puppy', o:'wrapped Christmas gift box', a:'puppy'}
+  ];
+
   const quickWrap = el('quick');
-  quick.forEach(q=>{
-    const span=document.createElement('button');
-    span.className='chip';
-    span.textContent=q.t;
-    span.onclick=()=>{ $object.value=q.o; $animal.value=q.a; autoSurface(); build(); };
-    quickWrap.appendChild(span);
+  quick.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = q.t;
+    btn.onclick = () => {
+      $object.value = q.o;
+      $animal.value = q.a;
+      autoSurface();
+      build();
+    };
+    quickWrap.appendChild(btn);
   });
 
   function autoSurface(){
-    const objVal=$object.value; const match=objects.find(x=>x.v===objVal);
-    if(match){ $surface.value = match.exSurface; }
+    const objVal = $object.value;
+    const match = objects.find(x => x.v === objVal);
+    if (match && surfaces.indexOf(match.exSurface) !== -1) {
+      $surface.value = match.exSurface;
+    }
   }
-  $object.addEventListener('change',()=>{ autoSurface(); });
 
-  function sentenceCase(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+  $object.addEventListener('change', autoSurface);
+
+  function sentenceCase(s){
+    return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  }
 
   function build(){
-    const obj=$object.value, ani=$animal.value, surf=$surface.value, light=$lighting.value, cam=$camera.value;
+    const obj = $object.value;
+    const ani = $animal.value;
+    const surf = $surface.value;
+    const light = $lighting.value;
+    const cam = $camera.value;
     const withReaction = el('reaction').checked;
     const withSound = el('sound').checked;
-    const forbid = 'Everything looks genuinely filmed: real animal, no cartoon, no fantasy, no magical effects.';
 
-    // Standard prompt
+    const forbid =
+      'Everything looks genuinely filmed with a phone or real camera: real animal, no cartoon, no fantasy, no magical effects.';
+
     const parts = [];
-    parts.push(`A hyper-realistic vertical 9:16 cinematic close-up video.`);
-    parts.push(`Scene begins with a ${obj} resting on a ${surf}. Human hands approach and start opening it slowly.`);
-    parts.push(`Camera style: ${cam}. Lighting: ${light}.`);
-    if(withSound) parts.push(`Audible realistic sounds of rustling and tearing.`);
-    parts.push(`As it opens, there is not food or objects inside but a real ${ani} emerging, captured with shallow depth of field and detailed textures.`);
-    if(withReaction) parts.push(`The ${ani} looks at the camera, then briefly blinks or licks its nose.`);
+    parts.push('A hyper-realistic vertical 9:16 cinematic close-up video.');
+    parts.push(
+      'Scene begins with a ' + obj + ' resting on a ' + surf + '. ' +
+      'Human hands approach and start opening it slowly, showing a clear, believable motion.'
+    );
+    parts.push('Camera style: ' + cam + '. Lighting: ' + light + '.');
+    if (withSound) {
+      parts.push('Include subtle, realistic sounds of rustling, tearing, or opening, as appropriate for the object.');
+    }
+    parts.push(
+      'As it opens, there is no food, product, or objects inside, but a real ' + ani +
+      ' emerging from the interior, captured with shallow depth of field and detailed textures.'
+    );
+    if (withReaction) {
+      parts.push(
+        'The ' + ani +
+        ' briefly holds eye contact with the camera, then naturally blinks or lightly licks its nose.'
+      );
+    }
     parts.push(forbid);
+
     $std.value = parts.join(' ');
 
-    // Beat sheet
-    const beats=[
-      `[0–2s] Establish: a closed ${obj} on a ${surf}. Hands enter frame.`,
-      `[2–4s] Opening action: close macro on the seal / lid / tape as it separates; ${light.toLowerCase()}.`,
-      `[4–6s] Tease: a hint of fur is visible inside; focus racks from hands to interior.`,
-      `[6–8s] Reveal: a real ${ani} fills frame inside; textures of foil/wood/cardboard are sharp.`,
-      `[8–10s] Button: the ${ani} holds eye contact${withReaction?", then blinks or licks its nose":""}.`,
-      `[Tech] Camera: ${cam}. Ratio: 9:16 vertical. Tone: realistic, no fantasy, no cartoon.`
+    const beats = [
+      '[0–2s] Establish: a closed ' + obj + ' on a ' + surf + '. Hands enter frame and touch the object.',
+      '[2–4s] Opening action: macro focus on the opening motion (seal / lid / tape / flap) with ' +
+        light.toLowerCase() + '.',
+      '[4–6s] Tease: a hint of fur or the animal shape becomes visible inside; focus racks from hands to interior.',
+      '[6–8s] Reveal: a real ' + ani +
+        ' clearly fills more of the frame from inside; textures of packaging and environment stay realistic.',
+      '[8–10s] Button: the ' + ani + ' holds eye contact' +
+        (withReaction ? ', then naturally blinks or licks its nose.' : '.') ,
+      '[Tech] Camera: ' + cam +
+        '. Ratio: 9:16 vertical. Tone: realistic everyday footage for US viewers, no fantasy, no cartoon.'
     ].join('\n');
+
     $beatsOut.value = beats;
 
-    el('logline').value = `${sentenceCase(obj)} opening reveals a real ${ani} in a realistic 9:16 macro video.`;
-
+    el('logline').value =
+      sentenceCase(obj) + ' opening reveals a real ' + ani + ' in a realistic 9:16 macro video.';
     $beatsWrap.style.display = $beats.checked ? 'block' : 'none';
   }
 
-  function randFrom(a){ return a[Math.floor(Math.random()*a.length)]; }
-  el('random').onclick = ()=>{ $object.value=randFrom(objects).v; $animal.value=randFrom(animals); autoSurface(); $lighting.value=randFrom(lighting); $camera.value=randFrom(camera); build(); };
+  function randFrom(a){
+    return a[Math.floor(Math.random() * a.length)];
+  }
+
+  el('random').onclick = () => {
+    const ro = randFrom(objects);
+    $object.value = ro.v;
+    $animal.value = randFrom(animals);
+    autoSurface();
+    $lighting.value = randFrom(lighting);
+    $camera.value = randFrom(camera);
+    build();
+  };
+
   el('generate').onclick = build;
-  el('beats').onchange = ()=>{ $beatsWrap.style.display = $beats.checked ? 'block' : 'none'; };
+  el('beats').onchange = () => {
+    $beatsWrap.style.display = $beats.checked ? 'block' : 'none';
+  };
 
-  el('copyStd').onclick = async()=>{ await navigator.clipboard.writeText($std.value); flash(el('copyStd')); };
-  el('copyBeats').onclick = async()=>{ await navigator.clipboard.writeText($beatsOut.value); flash(el('copyBeats')); };
-  el('reset').onclick = ()=>{ $object.selectedIndex=0; $animal.selectedIndex=0; $surface.selectedIndex=0; $lighting.selectedIndex=0; $camera.selectedIndex=0; el('reaction').checked=true; el('sound').checked=true; el('beats').checked=true; autoSurface(); build(); };
+  function flash(btn){
+    const old = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = old; }, 900);
+  }
 
-  function flash(btn){ const old=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=old,900); }
+  el('copyStd').onclick = async () => {
+    if (!$std.value) build();
+    await navigator.clipboard.writeText($std.value);
+    flash(el('copyStd'));
+  };
 
-  // initial state
-  autoSurface(); build();
+  el('copyBeats').onclick = async () => {
+    if (!$beatsOut.value) build();
+    await navigator.clipboard.writeText($beatsOut.value);
+    flash(el('copyBeats'));
+  };
+
+  el('reset').onclick = () => {
+    $object.selectedIndex = 0;
+    $animal.selectedIndex = 0;
+    $surface.selectedIndex = 0;
+    $lighting.selectedIndex = 0;
+    $camera.selectedIndex = 0;
+    el('reaction').checked = true;
+    el('sound').checked = true;
+    el('beats').checked = true;
+    autoSurface();
+    build();
+  };
+
+  // init
+  autoSurface();
+  build();
 })();
-</script></body>
+</script>
+</body>
 </html>
